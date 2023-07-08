@@ -28,4 +28,4 @@ def callback(bt_addr, rssi, packet, additional_info):
 print("Scan Started")
 scanner = BeaconScanner(callback)
 scanner.start()
-
+app.run(host="0.0.0.0", port="5956")
