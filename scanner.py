@@ -1,7 +1,7 @@
 import time
 
 from beacontools import BeaconScanner
-from flask import Flask
+from flask import Flask, jsonify
 from cache import Cache
 devices = Cache()
 app = Flask(__name__)
@@ -20,7 +20,7 @@ def deviceInfo(macAddr):
     data = str(devices.getKey(macAddr))
     if not data:
         return "NO DEVICE FOUND", 404
-    return str(data)
+    return jsonify(data)
     
 @app.route('/')
 def info():
