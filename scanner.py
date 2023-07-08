@@ -9,4 +9,4 @@ scanner = BeaconScanner(callback,
     packet_filter=EddystoneTLMFrame
 )
 scanner.start()
-\
+
