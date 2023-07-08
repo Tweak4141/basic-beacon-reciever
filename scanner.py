@@ -12,8 +12,8 @@ def tempInfo(macAddr):
     data = devices.getKey(macAddr)
     if not data:
         return "NO DEVICE FOUND", 404
-    temp = data["packet"]
-    return str(temp["url"].replace("http://",""))
+    temp = data["packet"]["url"]
+    return str(temp.replace("http://",""))
     
 @app.route('/device/<macAddr>')
 def deviceInfo(macAddr):
