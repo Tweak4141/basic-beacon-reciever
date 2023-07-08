@@ -7,7 +7,7 @@ from datetime import datetime
 
 devices = Cache()
 app = Flask(__name__)
-seconds = 10
+seconds = 60
 scanning = False
 
 def restartScan():
@@ -18,7 +18,7 @@ def restartScan():
        time.sleep(seconds)
        scanner.stop()
        scanning = False
-       
+
 @app.route('/temp/<macAddr>')
 def tempInfo(macAddr):
     data = devices.getKey(macAddr)
