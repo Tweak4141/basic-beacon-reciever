@@ -12,14 +12,14 @@ scanning = False
 
 def restartScan():
     global scanning
-    if scanning == False:
-       scanner.start()
-       print("Scan Started")
-       scanning = True
-       time.sleep(seconds)
-       scanner.stop()
-       print("Scan Stopped")
-       scanning = False
+    if scanning is False:
+        scanner.start()
+        print("Scan Started")
+        scanning = True
+        time.sleep(seconds)
+        scanner.stop()
+        print("Scan Stopped")
+        scanning = False
 
 @app.route('/temp/<macAddr>')
 def tempInfo(macAddr):
