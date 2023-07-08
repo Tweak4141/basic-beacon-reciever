@@ -8,7 +8,17 @@ from datetime import datetime
 devices = Cache()
 app = Flask(__name__)
 seconds = 10
+scanning = False
 
+def restartScan():
+    global scanning
+    if scanning == False:
+       scanner.start()
+       scanning = True
+       time.sleep(seconds)
+       scanner.stop()
+       scanning = False
+       
 @app.route('/temp/<macAddr>')
 def tempInfo(macAddr):
     data = devices.getKey(macAddr)
@@ -42,6 +52,5 @@ scanner = BeaconScanner(callback)
 app.run(host="0.0.0.0", port="5956")
 
 while True:
-    scanner.start()
-    time.sleep(seconds)
-    scanner.stop()
+    restartScan()
+
