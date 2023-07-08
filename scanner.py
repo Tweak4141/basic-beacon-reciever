@@ -7,7 +7,7 @@ from datetime import datetime
 
 devices = Cache()
 app = Flask(__name__)
-
+seconds = 10
 
 @app.route('/temp/<macAddr>')
 def tempInfo(macAddr):
@@ -23,7 +23,13 @@ def deviceInfo(macAddr):
     if not data:
         return "NO DEVICE FOUND", 404
     return jsonify(data)
-    
+
+@app.route('/updatetime/<sec>')
+def updateSeconds(sec):
+    global seconds
+    seconds = sec
+    return seconds
+   
 @app.route('/')
 def info():
     return 'Sensor Server Running'
@@ -33,5 +39,10 @@ def callback(bt_addr, rssi, packet, additional_info):
     
 print("Scan Started")
 scanner = BeaconScanner(callback)
-scanner.start()
+
+while True:
+    scanner.start()
+    time.sleep(seconds)
+    scanner.stop()
+
 app.run(host="0.0.0.0", port="5956")
