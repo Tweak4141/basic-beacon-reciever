@@ -38,6 +38,7 @@ def info():
     return 'Sensor Server Running'
     
 def callback(bt_addr, rssi, packet, additional_info):
+    print(bt_addr)
     devices.setKey(bt_addr, { "bt_addr": bt_addr, "rssi": rssi, "packet": { "tx_pwr": packet.tx_power, "url": packet.url }, "additional_info": additional_info, "date_created": datetime.now().strftime("%m/%d/%Y, %H:%M:%S") })
     
 scanner = BeaconScanner(callback)
