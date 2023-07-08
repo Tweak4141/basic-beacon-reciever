@@ -39,10 +39,9 @@ def callback(bt_addr, rssi, packet, additional_info):
     
 print("Scan Started")
 scanner = BeaconScanner(callback)
+app.run(host="0.0.0.0", port="5956")
 
 while True:
     scanner.start()
     time.sleep(seconds)
     scanner.stop()
-
-app.run(host="0.0.0.0", port="5956")
