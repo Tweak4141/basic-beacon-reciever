@@ -1,6 +1,6 @@
 import time
 
-from beacontools import BeaconScanner, EddystoneTLMFrame
+from beacontools import BeaconScanner
 from flask import Flask
 from cache import Cache
 devices = Cache()
