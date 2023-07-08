@@ -1,6 +1,6 @@
 import time
 
-from beacontools import BeaconScanner
+from beacontools import BeaconScanner, EddystoneURLFrame
 from flask import Flask, jsonify
 from cache import Cache
 from datetime import datetime
@@ -41,7 +41,7 @@ def callback(bt_addr, rssi, packet, additional_info):
     print(bt_addr)
     devices.setKey(bt_addr, { "bt_addr": bt_addr, "rssi": rssi, "packet": { "tx_pwr": packet.tx_power, "url": packet.url }, "additional_info": additional_info, "date_created": datetime.now().strftime("%m/%d/%Y, %H:%M:%S") })
     
-scanner = BeaconScanner(callback)
+scanner = BeaconScanner(callback, packet_filter=[EddystoneURLFrame])
 scanner.start()
 app.run(host="0.0.0.0", port="5956")
 
