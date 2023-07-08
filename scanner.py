@@ -22,7 +22,6 @@ def info():
     return 'Sensor Server Running'
     
 def callback(bt_addr, rssi, packet, additional_info):
-    print("<%s, %d> %s %s" % (bt_addr, rssi, packet, additional_info))
     devices.setKey(bt_addr, { "bt_addr": bt_addr, "rssi": rssi, "packet": packet, "additional_info": additional_info })
     
 print("Scan Started")
