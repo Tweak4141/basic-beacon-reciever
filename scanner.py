@@ -11,7 +11,7 @@ app = Flask(__name__)
 def tempInfo(macAddr):
     data = devices.getKey(macAddr)
     temp = data["packet"]
-    return str(temp.url)
+    return str(temp.url.replace("http://",""))
     
 @app.route('/device/<macAddr>')
 def deviceInfo(macAddr):
