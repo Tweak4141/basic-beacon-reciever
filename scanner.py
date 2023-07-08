@@ -10,12 +10,17 @@ app = Flask(__name__)
 @app.route('/temp/<macAddr>')
 def tempInfo(macAddr):
     data = devices.getKey(macAddr)
+    if not data:
+        return "NO DEVICE FOUND", 404
     temp = data["packet"]
     return str(temp.url.replace("http://",""))
     
 @app.route('/device/<macAddr>')
 def deviceInfo(macAddr):
-    return str(devices.getKey(macAddr))
+    data = str(devices.getKey(macAddr))
+    if not data:
+        return "NO DEVICE FOUND", 404
+    return str(data)
     
 @app.route('/')
 def info():
