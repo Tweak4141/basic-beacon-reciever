@@ -7,14 +7,14 @@ devices = Cache()
 app = Flask(__name__)
 
 
-@app.route('/temp')
-def tempInfo():
+@app.route('/temp/<macAddr>')
+def tempInfo(macAddr):
     data = devices.getKey(macAddr)
     temp = data["packet"]
     return temp
     
-@app.route('/device')
-def deviceInfo():
+@app.route('/device/<macAddr>')
+def deviceInfo(macAddr):
     return devices.getKey(macAddr)
     
 @app.route('/')
