@@ -49,10 +49,13 @@ def callback(bt_addr, rssi, packet, additional_info):
 
 
 
-scanner: BeaconScanner = BeaconScanner(callback, packet_filter=[EddystoneURLFrame])
-app.run(host="0.0.0.0", port="5956")
+def main():
+    scanner: BeaconScanner = BeaconScanner(callback, packet_filter=[EddystoneURLFrame])
+    while True:
+        scanner.start()
+        time.sleep(10)
+        scanner.stop()
 
-while True:
-    scanner.start()
-    time.sleep(10)
-    scanner.stop()
+if __name__ == "main":
+    app.run(host="0.0.0.0", port="5956")
+    main()
