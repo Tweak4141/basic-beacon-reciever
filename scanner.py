@@ -10,14 +10,31 @@ app = Flask(__name__)
 seconds = 60
 scanning = False
 
+class Scanner():
+    def __init__(self, *args, **kwargs):
+        self.scanner: BeaconScanner = BeaconScanner(callback, packet_filter=[EddystoneURLFrame])
+        self.start()
 
-def main(restart):
-    scanner: BeaconScanner = BeaconScanner(callback, packet_filter=[EddystoneURLFrame])
-    if restart:
-        scanner.stop()
-        time.sleep(1)
-    scanner.start()
+    def _run(self):
+        self.is_running = False
+        self.start()
 
+    def start(self):
+        if not self.is_running:
+            self.scanner.start()
+            self.is_running = True
+
+    def stop(self):
+        if self.is_running:
+            self.scanner.stop()
+        self.is_running = False
+    
+    def restart(self):
+        self.stop()
+        self.start()
+        
+scanner = Scanner()
+    
 @app.route('/temp/<macAddr>')
 def tempInfo(macAddr):
     data = devices.getKey(macAddr)
@@ -41,7 +58,7 @@ def updateSeconds(sec):
 
 @app.route('/restart')
 def restart():
-    main(True)
+    scanner.restart()
 
 @app.route('/')
 def info():
@@ -58,5 +75,4 @@ def callback(bt_addr, rssi, packet, additional_info):
 
 
 if __name__ == "__main__":
-    main(False)
     app.run(host="0.0.0.0", port="5956")
