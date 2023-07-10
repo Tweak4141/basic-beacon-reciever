@@ -32,6 +32,12 @@ def updateSeconds(sec):
     global seconds
     seconds = sec
     return seconds
+
+@app.route('/rescan')
+def updateScan():
+    scanner.stop()
+    scanner.start()
+    return "Scanner Restarted."
    
 @app.route('/')
 def info():
