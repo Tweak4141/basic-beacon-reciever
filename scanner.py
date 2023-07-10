@@ -11,6 +11,12 @@ seconds = 60
 scanning = False
 
 
+def main(restart):
+    scanner: BeaconScanner = BeaconScanner(callback, packet_filter=[EddystoneURLFrame])
+    if restart:
+        scanner.stop()
+        time.sleep(1)
+    scanner.start()
 
 @app.route('/temp/<macAddr>')
 def tempInfo(macAddr):
@@ -33,6 +39,9 @@ def updateSeconds(sec):
     seconds = sec
     return seconds
 
+@app.route('/restart')
+def restart():
+    main(True)
 
 @app.route('/')
 def info():
@@ -47,14 +56,6 @@ def callback(bt_addr, rssi, packet, additional_info):
     except:
         print("Something went wrong")
 
-
-
-def main():
-    scanner: BeaconScanner = BeaconScanner(callback, packet_filter=[EddystoneURLFrame])
-    while True:
-        scanner.start()
-        time.sleep(10)
-        scanner.stop()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5956")
