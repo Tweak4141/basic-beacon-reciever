@@ -32,6 +32,7 @@ class Scanner():
     
     def restart(self):
         self.stop()
+        time.sleep(10)
         self.start()
 
 def callback(bt_addr, rssi, packet, additional_info):
