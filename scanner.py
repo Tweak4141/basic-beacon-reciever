@@ -33,13 +33,7 @@ def updateSeconds(sec):
     seconds = sec
     return seconds
 
-@app.route('/rescan')
-def updateScan():
-    scanner.stop()
-    time.sleep(5)
-    scanner.start()
-    return "Scanner Restarted."
-   
+
 @app.route('/')
 def info():
     return 'Sensor Server Running'
@@ -53,9 +47,12 @@ def callback(bt_addr, rssi, packet, additional_info):
     except:
         print("Something went wrong")
 
-def startScan():
-    scanner.start()
+
 
 scanner: BeaconScanner = BeaconScanner(callback, packet_filter=[EddystoneURLFrame])
 app.run(host="0.0.0.0", port="5956")
-startScan()
+
+while True:
+    scanner.start()
+    time.sleep(10)
+    scanner.stop()
