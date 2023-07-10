@@ -36,6 +36,7 @@ def updateSeconds(sec):
 @app.route('/rescan')
 def updateScan():
     scanner.stop()
+    time.sleep(5)
     scanner.start()
     return "Scanner Restarted."
    
