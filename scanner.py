@@ -53,6 +53,9 @@ def callback(bt_addr, rssi, packet, additional_info):
     except:
         print("Something went wrong")
 
+def startScan():
+    scanner.start()
+
 scanner: BeaconScanner = BeaconScanner(callback, packet_filter=[EddystoneURLFrame])
 app.run(host="0.0.0.0", port="5956")
-updateScan()
+startScan()
