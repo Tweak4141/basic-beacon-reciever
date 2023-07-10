@@ -52,8 +52,7 @@ def callback(bt_addr, rssi, packet, additional_info):
         print(f"Attribute Error. No matching attribute.\nStack Trace:\n{at}")
     except:
         print("Something went wrong")
-scanner = BeaconScanner(callback, packet_filter=[EddystoneURLFrame])
-scanner.start()
+
+scanner: BeaconScanner = BeaconScanner(callback, packet_filter=[EddystoneURLFrame])
 app.run(host="0.0.0.0", port="5956")
-
-
+updateScan()
