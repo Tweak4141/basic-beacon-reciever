@@ -13,6 +13,7 @@ scanning = False
 class Scanner():
     def __init__(self, callback, *args, **kwargs):
         self.scanner: BeaconScanner = BeaconScanner(callback, packet_filter=[EddystoneURLFrame])
+        self.is_running = False
         self.start()
 
     def _run(self):
@@ -32,7 +33,7 @@ class Scanner():
     def restart(self):
         self.stop()
         self.start()
-        
+
 def callback(bt_addr, rssi, packet, additional_info):
     print(bt_addr)
     try:
