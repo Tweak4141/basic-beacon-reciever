@@ -12,6 +12,7 @@ devices = Cache()
 app = Quart(__name__)
 
 def callback(device: BLEDevice, advertisement_data: AdvertisementData):
+    print(device, advertisement_data)
     if device.address != "CB:05:8F:EC:67:82":
         return
     data = advertisement_data.service_data.get(advertisement_data.service_uuids[0])
