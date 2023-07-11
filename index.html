@@ -323,10 +323,11 @@
         const tempsocket = new WebSocket(
         "ws://talosone.local:5956/ws/cb:05:8f:ec:67:82"
         );
+        var temp = 0
         tempsocket.onmessage = (event) => {
-        console.log(event.data.packets);
+        let data = JSON.parse(event.data);
+        print(data)
         };
-        let temp = 33
 
 
         const temperature = document.getElementById("temperature");

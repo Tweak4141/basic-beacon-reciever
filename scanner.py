@@ -19,7 +19,7 @@ def callback(device: BLEDevice, advertisement_data: AdvertisementData):
     url_bytes = b"\x03\x03\xAA\xFE\x13\x16\xAA\xFE" + data 
     parsedData = parse_packet(url_bytes)
     try:
-        devices.setKey(str(device.address).lower(), str({ "bt_addr": device.address, "rssi": advertisement_data.rssi, "packet": { "tx_pwr": parsedData.tx_power, "url": parsedData.url.replace("http://","") }, "additional_info": device.name, "date_created": datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}))
+        devices.setKey(str(device.address).lower(), { "bt_addr": device.address, "rssi": advertisement_data.rssi, "packet": { "tx_pwr": parsedData.tx_power, "url": parsedData.url.replace("http://","") }, "additional_info": str(device.name), "date_created": datetime.now().strftime("%m/%d/%Y, %H:%M:%S")})
     except AttributeError as at:
         print(f"Attribute Error. No matching attribute.\nStack Trace:\n{at}")
     except:
