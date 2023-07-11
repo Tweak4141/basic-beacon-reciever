@@ -34,6 +34,7 @@ async def main():
             await asyncio.sleep(5.0)
             await scanner.stop()
         except Exception as error:
+            await scanner.stop()
             print(error)
 
 @app.before_serving
