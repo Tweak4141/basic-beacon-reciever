@@ -1,59 +1,53 @@
-import time
 
-from beacontools import BeaconScanner, EddystoneURLFrame
-from flask import Flask, jsonify
+import asyncio
+from bleak import BleakScanner
+from bleak.backends.device import BLEDevice
+from bleak.backends.scanner import AdvertisementData
+from beacontools import parse_packet
+from quart import Quart, jsonify, websocket
 from cache import Cache
 from datetime import datetime
 
 devices = Cache()
-app = Flask(__name__)
-seconds = 60
-scanning = False
+app = Quart(__name__)
 
-class Scanner():
-    def __init__(self, callback, *args, **kwargs):
-        self.scanner: BeaconScanner = BeaconScanner(callback, packet_filter=[EddystoneURLFrame])
-        self.is_running = False
-        self.start()
-
-    def _run(self):
-        self.is_running = False
-        self.start()
-
-    def start(self):
-        if not self.is_running:
-            self.scanner.start()
-            self.is_running = True
-
-    def stop(self):
-        if self.is_running:
-            self.scanner.stop()
-        self.is_running = False
-    
-    def restart(self):
-        self.stop()
-        time.sleep(30)
-        self.start()
-
-def callback(bt_addr, rssi, packet, additional_info):
-    print(bt_addr)
+def callback(device: BLEDevice, advertisement_data: AdvertisementData):
+    if device.address != "CB:05:8F:EC:67:82":
+        return
+    data = advertisement_data.service_data.get(advertisement_data.service_uuids[0])
+    url_bytes = b"\x03\x03\xAA\xFE\x13\x16\xAA\xFE" + data 
+    parsedData = parse_packet(url_bytes)
     try:
-        devices.setKey(bt_addr, { "bt_addr": bt_addr, "rssi": rssi, "packet": { "tx_pwr": packet.tx_power, "url": packet.url }, "additional_info": additional_info, "date_created": datetime.now().strftime("%m/%d/%Y, %H:%M:%S") })
+        devices.setKey(device.address, str({ "bt_addr": device.address, "rssi": advertisement_data.rssi, "packet": { "tx_pwr": parsedData.tx_power, "url": parsedData.url.replace("http://","") }, "additional_info": device.name, "date_created": datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}))
     except AttributeError as at:
         print(f"Attribute Error. No matching attribute.\nStack Trace:\n{at}")
     except:
         print("Something went wrong")
 
-scanner = Scanner(callback)
-    
+async def main():
+    scanner = BleakScanner(callback)
+    while True:
+        print("(re)starting scanner")
+        await scanner.start()
+        await asyncio.sleep(5.0)
+        await scanner.stop()
+
+@app.before_serving
+async def startup():
+    app.add_background_task(main)
+
 @app.route('/temp/<macAddr>')
 def tempInfo(macAddr):
     data = devices.getKey(macAddr)
     if not data:
         return "NO DEVICE FOUND", 404
-    temp = data["packet"]["url"]
-    return jsonify({ "temp": temp.replace("http://",""), "date": data["date_created"] })
-    
+    return jsonify(data)
+
+@app.websocket("/ws/<macAddr>")
+async def ws(macAddr):
+    while True:
+        await websocket.send_json(devices.getKey(macAddr))
+
 @app.route('/device/<macAddr>')
 def deviceInfo(macAddr):
     data = str(devices.getKey(macAddr))
@@ -66,10 +60,6 @@ def updateSeconds(sec):
     global seconds
     seconds = sec
     return seconds
-
-@app.route('/restart')
-def restart():
-    scanner.restart()
 
 @app.route('/')
 def info():
