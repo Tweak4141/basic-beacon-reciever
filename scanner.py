@@ -19,7 +19,7 @@ def callback(device: BLEDevice, advertisement_data: AdvertisementData):
     url_bytes = b"\x03\x03\xAA\xFE\x13\x16\xAA\xFE" + data 
     parsedData = parse_packet(url_bytes)
     try:
-        devices.setKey(device.address, str({ "bt_addr": device.address, "rssi": advertisement_data.rssi, "packet": { "tx_pwr": parsedData.tx_power, "url": parsedData.url.replace("http://","") }, "additional_info": device.name, "date_created": datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}))
+        devices.setKey(str(device.address).lower(), str({ "bt_addr": device.address, "rssi": advertisement_data.rssi, "packet": { "tx_pwr": parsedData.tx_power, "url": parsedData.url.replace("http://","") }, "additional_info": device.name, "date_created": datetime.now().strftime("%m/%d/%Y, %H:%M:%S")}))
     except AttributeError as at:
         print(f"Attribute Error. No matching attribute.\nStack Trace:\n{at}")
     except:
@@ -39,7 +39,7 @@ async def startup():
 
 @app.route('/temp/<macAddr>')
 def tempInfo(macAddr):
-    data = devices.getKey(macAddr)
+    data = devices.getKey(macAddr.lower())
     if not data:
         return "NO DEVICE FOUND", 404
     return jsonify(data)
@@ -47,11 +47,11 @@ def tempInfo(macAddr):
 @app.websocket("/ws/<macAddr>")
 async def ws(macAddr):
     while True:
-        await websocket.send_json(devices.getKey(macAddr))
+        await websocket.send_json(devices.getKey(macAddr.lower()))
 
 @app.route('/device/<macAddr>')
 def deviceInfo(macAddr):
-    data = str(devices.getKey(macAddr))
+    data = str(devices.getKey(macAddr.lower()))
     if not data:
         return "NO DEVICE FOUND", 404
     return jsonify(data)
@@ -66,9 +66,6 @@ def updateSeconds(sec):
 def info():
     return 'Sensor Server Running'
     
-@app.route('/exit')
-def exitServer():
-    raise SystemExit
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5956")
