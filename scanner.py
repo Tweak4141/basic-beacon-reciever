@@ -48,6 +48,7 @@ def tempInfo(macAddr):
 async def ws(macAddr):
     while True:
         await websocket.send_json(devices.getKey(macAddr.lower()))
+        await asyncio.sleep(2.0)
 
 @app.route('/device/<macAddr>')
 def deviceInfo(macAddr):
