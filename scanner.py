@@ -33,8 +33,8 @@ async def main():
             await scanner.start()
             await asyncio.sleep(5.0)
             await scanner.stop()
-        except:
-            print("An Error Has Occured")
+        except Exception as error:
+            print(error)
 
 @app.before_serving
 async def startup():
