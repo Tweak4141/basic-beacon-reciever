@@ -28,10 +28,13 @@ def callback(device: BLEDevice, advertisement_data: AdvertisementData):
 async def main():
     scanner = BleakScanner(callback)
     while True:
-        print("(re)starting scanner")
-        await scanner.start()
-        await asyncio.sleep(5.0)
-        await scanner.stop()
+        try:
+            print("(re)starting scanner")
+            await scanner.start()
+            await asyncio.sleep(5.0)
+            await scanner.stop()
+        except:
+            print("An Error Has Occured")
 
 @app.before_serving
 async def startup():

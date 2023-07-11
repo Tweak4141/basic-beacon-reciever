@@ -276,6 +276,7 @@
         
         <div id="playground">		
             <p id="unit">Current Unit: Celcius (C°)</p>
+            <p id="time">Last Update: Contacting server...</p>
         </div>
     </div>
 
@@ -311,33 +312,61 @@
 
         // Switch unit of temperature
 
-        const unitP = document.getElementById("unit");
-
-        unitP.addEventListener("click", () => {
-            config.unit = config.unit === "Celcius" ? "Fahrenheit" : "Celcius";
-            unitP.innerHTML = config.unit + ' ' + units[config.unit];
-            return setTemperature();
-        })
-
         // Change temperature
         const tempsocket = new WebSocket(
         "ws://talosone.local:5956/ws/cb:05:8f:ec:67:82"
         );
-        var temp = 0
         tempsocket.onmessage = (event) => {
-        let data = JSON.parse(event.data);
-        print(data)
+            let data = JSON.parse(event.data);
+            console.log(data)
+            setTemperature(data.packet.url)
+            const userTime = new Date().getTime(); // Replace with the actual user's local time
+
+// Assuming you have the server-provided time via WebSocket
+const serverTime = new Date(data.date_created).getTime(); // Replace with the actual server-provided time
+
+const timeDifferenceMillis = userTime - serverTime;
+
+// Convert the time difference to seconds, minutes, hours, days
+let timeDifferenceSeconds = Math.floor(timeDifferenceMillis / 1000);
+let timeDifferenceMinutes = Math.floor(timeDifferenceSeconds / 60);
+let timeDifferenceHours = Math.floor(timeDifferenceMinutes / 60);
+let timeDifferenceDays = Math.floor(timeDifferenceHours / 24);
+
+// Calculate the remaining time in each unit
+timeDifferenceSeconds %= 60;
+timeDifferenceMinutes %= 60;
+timeDifferenceHours %= 24;
+
+// Prepare the formatted time difference string
+let time = '';
+
+if (timeDifferenceDays > 0) {
+  time += `${timeDifferenceDays} days `;
+}
+
+if (timeDifferenceHours > 0) {
+  time += `${timeDifferenceHours} hours `;
+}
+
+if (timeDifferenceMinutes > 0) {
+  time += `${timeDifferenceMinutes} minutes `;
+}
+
+if (timeDifferenceSeconds > 0 || times === '') {
+  time += `${timeDifferenceSeconds} seconds`;
+}
+
+            document.getElementById("time").textContent = `Last Updated: ${time} seconds ago`
         };
-
-
+        
         const temperature = document.getElementById("temperature");
 
-        function setTemperature() {
+        function setTemperature(temp = 0) {
             temperature.style.height = (temp - config.minTemp) / (config.maxTemp - config.minTemp) * 100 + "%";
             temperature.dataset.value = temp + units[config.unit];
         }
 
-        setTimeout(setTemperature, 1000);
 
 
     </script>
