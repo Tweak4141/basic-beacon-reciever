@@ -314,7 +314,7 @@
 
         // Change temperature
         const tempsocket = new WebSocket(
-        "ws://talosone.local:5956/ws/cb:05:8f:ec:67:82"
+        "ws://localhost:5956/ws/cb:05:8f:ec:67:82"
         );
         tempsocket.onmessage = (event) => {
             let data = JSON.parse(event.data);
